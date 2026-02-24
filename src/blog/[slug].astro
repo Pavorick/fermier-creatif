@@ -1,0 +1,32 @@
+---
+import { getCollection } from 'astro:content';
+
+// 1. Générer les chemins pour chaque article
+export async function getStaticPaths() {
+  const blogEntries = await getCollection('blog');
+  return blogEntries.map(entry => ({
+    params: { slug: entry.slug }, props: { entry },
+  }));
+}
+
+// 2. Récupérer les données de l'article
+const { entry } = Astro.props;
+const { Content } = await entry.render();
+---
+
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>{entry.data.title} | Fermier Créatif</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-stone-50 text-stone-900 leading-relaxed">
+    <article class="max-w-3xl mx-auto px-6 py-20">
+        <a href="/blog" class="text-green-600 uppercase text-xs font-bold tracking-widest">← Retour aux articles</a>
+        <h1 class="text-5xl font-bold my-8">{entry.data.title}</h1>
+        <div class="prose prose-stone lg:prose-xl">
+            <Content />
+        </div>
+    </article>
+</body>
+</html>
